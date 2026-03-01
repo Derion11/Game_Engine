@@ -1,6 +1,6 @@
 #include "Window.h"
 
-Window* window = nullptr; // Pointer global ke objek Window
+//Window* window = nullptr; // Pointer global ke objek Window
 
 Window::Window()
 {
@@ -12,13 +12,20 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) // P
 	{
 	case WM_CREATE: // Pesan pembuatan jendela
 	{
-		window->onCreate(); // Panggil metode onCreate dari objek Window
+		// Event fired when the window is created
+		// collected here..
+		Window* window = (Window*)((LPCREATESTRUCT)lparam)->lpCreateParams;
+		// .. and then stored for later lookup
+		SetWindowLongPtr(hwnd, GWLP_USERDATA, (LONG_PTR)window);
+		window->onCreate();
 		break;
 	}
 	case WM_DESTROY: // Pesan penghancuran jendela
 	{
-		window->onDestroy(); // Panggil metode onDestroy dari objek Window
-		::PostQuitMessage(0); // Kirim pesan keluar
+		// Event fired when the window is destroyed
+		Window* window = (Window*)GetWindowLongPtr(hwnd, GWLP_USERDATA);
+		window->onDestroy();
+		::PostQuitMessage(0);
 		break;
 	}
 	
@@ -50,8 +57,9 @@ bool Window::init() // Inisialisasi window
 	if (!::RegisterClassEx(&wc)) // Jika pendaftaran kelas gagal
 		return false;
 
-	if (!window) // Jika pointer global belum diinisialisasi
-		window = this; // Set pointer global ke objek Window saat ini
+	//Sebelum modifikasi kode untuk pointer
+	//if (!window) // Jika pointer global belum diinisialisasi
+	//	window = this; // Set pointer global ke objek Window saat ini
 
 	m_hwnd=::CreateWindowEx(WS_EX_OVERLAPPEDWINDOW, // gaya jendela
 					L"MyWindowClass", // nama kelas jendela
@@ -62,7 +70,7 @@ bool Window::init() // Inisialisasi window
 					NULL, // jendela induk
 					NULL, // menu
 					NULL, // instance aplikasi
-					NULL); // parameter tambahan
+					this); // parameter tambahan
 
 	if (!m_hwnd) // Jika pembuatan jendela gagal
 		return false;
@@ -85,7 +93,7 @@ bool Window::broadcast()
 		DispatchMessage(&msg); // Kirim pesan ke prosedur jendela
 	}
 
-	window->onUpdate(); // Panggil metode onUpdate dari objek Window
+	this->onUpdate(); // Panggil metode onUpdate dari objek Window
 
 	Sleep(1); // Beri kesempatan pada sistem operasi untuk menjalankan tugas lainnya
 

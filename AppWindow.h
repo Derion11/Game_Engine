@@ -7,7 +7,7 @@ class AppWindow: public Window
 		AppWindow();
 		~AppWindow();
 
-		// Diwariskan melalui class Window
+		// Method diwariskan melalui class Window
 		void onCreate() override;
 		void onUpdate() override;
 		void onDestroy() override;
