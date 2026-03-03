@@ -17,6 +17,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) // P
 		Window* window = (Window*)((LPCREATESTRUCT)lparam)->lpCreateParams;
 		// .. and then stored for later lookup
 		SetWindowLongPtr(hwnd, GWLP_USERDATA, (LONG_PTR)window);
+		window->setHWND(hwnd);
 		window->onCreate();
 		break;
 	}
@@ -112,6 +113,26 @@ bool Window::release()
 bool Window::isRun()
 {
 	return m_is_run;
+}
+
+RECT Window::getClientWindowRect()
+{
+	RECT rc;
+	::GetClientRect(this->m_hwnd, &rc); // Mendapatkan ukuran jendela klien
+	return rc;
+}
+
+void Window::setHWND(HWND hwnd)
+{
+	this->m_hwnd = hwnd;
+}
+
+void Window::onCreate()
+{
+}
+
+void Window::onUpdate()
+{
 }
 
 void Window::onDestroy()

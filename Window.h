@@ -12,9 +12,11 @@ public:
 	bool release();
 	bool isRun(); // Cek apakah jendela masih berjalan
 
+	RECT getClientWindowRect(); // Mendapatkan ukuran jendela klien
+	void setHWND(HWND hwnd); // Mengatur handle jendela (HWND) untuk objek Window, memungkinkan integrasi dengan sistem jendela Windows dan pengelolaan pesan serta interaksi dengan jendela yang dibuat
 
-	virtual void onCreate()=0;
-	virtual void onUpdate()=0;
+	virtual void onCreate();
+	virtual void onUpdate();
 	virtual void onDestroy();
 
 
