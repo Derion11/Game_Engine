@@ -1,6 +1,7 @@
 #pragma once
 #include <d3d11.h>
 class SwapChain;
+class DeviceContext;
 
 class GraphicsEngine
 {
@@ -12,12 +13,14 @@ public:
 
 public:
 	SwapChain * createSwapChain();
+	DeviceContext* getImmediateDeviceContext(); //mengembalikan pointer ke konteks perangkat langsung (immediate device context) yang digunakan untuk mengirim perintah rendering ke GPU, memungkinkan akses ke konteks perangkat untuk operasi rendering
 public:
 	static GraphicsEngine* get(); //mengembalikan referensi ke instance tunggal dari kelas GraphicsEngine, memungkinkan akses global ke engine grafis
 private:
+	DeviceContext* m_imm_device_context;
+private:
 	ID3D11Device* m_d3d_device; //pointer ke perangkat DirectX 11
 	D3D_FEATURE_LEVEL m_feature_level; //menyimpan level fitur yang digunakan oleh perangkat DirectX 11
-	ID3D11DeviceContext* m_imm_context; //pointer ke konteks perangkat DirectX 11, digunakan untuk mengirim perintah rendering ke GPU
 private:
 	IDXGIDevice* m_dxgi_device; //pointer ke perangkat DXGI, digunakan untuk mengelola sumber daya grafis dan swap chain
 	IDXGIAdapter* m_dxgi_adapter; //pointer ke adapter DXGI, digunakan untuk mengelola perangkat keras grafis yang tersedia

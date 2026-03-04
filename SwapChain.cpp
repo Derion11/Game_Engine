@@ -27,6 +27,27 @@ bool SwapChain::init(HWND hwnd, UINT width, UINT height)
 	{
 		return false;
 	}
+
+	ID3D11Texture2D* buffer = NULL;
+	hr=m_swap_chain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&buffer); //menggunakan metode GetBuffer pada swap chain untuk mendapatkan pointer ke buffer belakang (back buffer) yang akan digunakan sebagai target render untuk menggambar frame sebelum ditampilkan ke layar
+	if (FAILED(hr))
+	{
+		return false;
+	}
+
+	hr=device->CreateRenderTargetView(buffer, NULL, &m_rtv);
+	buffer->Release();
+
+	if (FAILED(hr))
+	{
+		return false;
+	}
+	return true;
+}
+
+bool SwapChain::present(bool vsync)
+{
+	m_swap_chain->Present(vsync, NULL); 
 	return true;
 }
 

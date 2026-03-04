@@ -86,6 +86,7 @@ bool Window::init() // Inisialisasi window
 
 bool Window::broadcast()
 {
+	this->onUpdate(); // Panggil metode onUpdate dari objek Window
 	MSG msg;
 
 	while(::PeekMessage(&msg,NULL,0,0,PM_REMOVE) > 0)
@@ -94,7 +95,6 @@ bool Window::broadcast()
 		DispatchMessage(&msg); // Kirim pesan ke prosedur jendela
 	}
 
-	this->onUpdate(); // Panggil metode onUpdate dari objek Window
 
 	Sleep(1); // Beri kesempatan pada sistem operasi untuk menjalankan tugas lainnya
 
