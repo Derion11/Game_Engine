@@ -10,7 +10,7 @@ AppWindow::~AppWindow()
 
 void AppWindow::onCreate()
 {
-	//Window::onCreate();
+	Window::onCreate();
 	GraphicsEngine::get()->init(); //memanggil metode init() dari kelas GraphicsEngine untuk menginisialisasi engine grafis dan perangkat DirectX 11 saat jendela dibuat
 	m_swap_chain = GraphicsEngine::get()->createSwapChain();
 	
@@ -21,7 +21,11 @@ void AppWindow::onCreate()
 
 void AppWindow::onUpdate()
 {
-	//Window::onUpdate();
+	Window::onUpdate();
+	GraphicsEngine::get()->getImmediateDeviceContext()->clearRenderTargetColor(this->m_swap_chain,
+		0, 1, 0, 1);
+
+	m_swap_chain->present(false);
 }
 
 void AppWindow::onDestroy()

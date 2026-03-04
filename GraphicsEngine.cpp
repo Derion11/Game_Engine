@@ -23,6 +23,7 @@ bool GraphicsEngine::init()
 	UINT num_feature_levels = ARRAYSIZE(feature_levels);
 	
 	HRESULT res = 0;
+	ID3D11DeviceContext* m_imm_context;
 	for (UINT driver_type_index = 0; driver_type_index < num_driver_types;) //melakukan iterasi melalui jenis driver yang tersedia untuk mencoba membuat perangkat DirectX 11
 	{
 		res=D3D11CreateDevice(NULL, driver_types[driver_type_index], NULL, NULL, feature_levels, //menyediakan array fitur level yang ingin digunakan, dalam hal ini hanya satu level yaitu 11.0
@@ -39,7 +40,7 @@ bool GraphicsEngine::init()
 		return false;
 	}
 
-	//new DeviceContext(m_imm_context)
+	m_imm_device_context = new DeviceContext(m_imm_context);
 
 	m_d3d_device->QueryInterface(__uuidof(IDXGIDevice), (void**)&m_dxgi_device); //menggunakan metode QueryInterface untuk mendapatkan pointer ke perangkat DXGI dari perangkat DirectX 11 yang telah dibuat, memungkinkan pengelolaan sumber daya grafis dan swap chain
 	m_dxgi_device->GetParent(__uuidof(IDXGIAdapter), (void**)&m_dxgi_adapter);
@@ -54,7 +55,7 @@ bool GraphicsEngine::release()
 	m_dxgi_adapter->Release();
 	m_dxgi_factory->Release();
 
-	m_imm_context->Release();
+	m_imm_device_context->release();
 	m_d3d_device->Release();
 	return true;
 }
@@ -66,6 +67,11 @@ GraphicsEngine::~GraphicsEngine()
 SwapChain * GraphicsEngine::createSwapChain()
 {
 	return new SwapChain();
+}
+
+DeviceContext* GraphicsEngine::getImmediateDeviceContext()
+{
+	return this -> m_imm_device_context;
 }
 
 GraphicsEngine * GraphicsEngine::get()
