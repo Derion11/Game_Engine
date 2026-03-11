@@ -2,6 +2,7 @@
 #include <d3d11.h>
 class SwapChain;
 class DeviceContext;
+class VertexBuffer;
 
 class GraphicsEngine
 {
@@ -14,6 +15,7 @@ public:
 public:
 	SwapChain * createSwapChain();
 	DeviceContext* getImmediateDeviceContext(); //mengembalikan pointer ke konteks perangkat langsung (immediate device context) yang digunakan untuk mengirim perintah rendering ke GPU, memungkinkan akses ke konteks perangkat untuk operasi rendering
+	VertexBuffer* createVertexBuffer(); //membuat dan mengembalikan pointer ke objek VertexBuffer baru, memungkinkan pembuatan buffer vertex untuk menyimpan data vertex yang akan digunakan dalam rendering grafis
 public:
 	static GraphicsEngine* get(); //mengembalikan referensi ke instance tunggal dari kelas GraphicsEngine, memungkinkan akses global ke engine grafis
 private:
@@ -27,6 +29,6 @@ private:
 	IDXGIFactory* m_dxgi_factory; //pointer ke pabrik DXGI, digunakan untuk membuat swap chain dan objek terkait lainnya
 private:
 	friend class SwapChain; //menyatakan kelas SwapChain sebagai teman dari kelas GraphicsEngine, memungkinkan SwapChain untuk mengakses anggota pribadi dari GraphicsEngine
-
+	friend class VertexBuffer;
 };
 
