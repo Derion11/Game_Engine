@@ -42,6 +42,7 @@ bool SwapChain::init(HWND hwnd, UINT width, UINT height)
 	{
 		return false;
 	}
+
 	return true;
 }
 
