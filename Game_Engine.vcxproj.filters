@@ -66,4 +66,9 @@
       <Filter>GameEngine\GraphicsEngine\VertexBuffer</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="shader.fx">
+      <Filter>App</Filter>
+    </FxCompile>
+  </ItemGroup>
 </Project>
