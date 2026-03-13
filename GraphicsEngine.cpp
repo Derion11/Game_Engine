@@ -3,7 +3,7 @@
 #include "DeviceContext.h"
 #include "VertexBuffer.h"
 
-#include <d3dcompiler.h>
+#include <d3dcompiler.h> // header yang menyediakan fungsi untuk mengkompilasi shader dari file sumber.
 
 GraphicsEngine::GraphicsEngine()
 {
