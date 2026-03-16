@@ -30,9 +30,14 @@ void AppWindow::onCreate()
 	vertex list[] =
 	{
 		//Koordinat segitiga dalam ruang 3D -> {x, y, z}
-		{-0.5f, -0.5f, 0.0f },
-		{ 0.0f, 0.5f, 0.0f },
-		{ 0.5f, -0.5f, 0.0f }
+		{-0.5f, -0.5f, 0.0f },	// Vertex 1
+		{ -0.5f, 0.5f, 0.0f },	// Vertex 2
+		{ 0.5f, 0.5f, 0.0f },	// Vertex 3
+
+
+		{0.5f, 0.5f, 0.0f },	// V4
+		{ 0.5f, -0.5f, 0.0f },	// V5
+		{ -0.5f, -0.5f, 0.0f }	// V6
 	};
 
 	m_vb = GraphicsEngine::get()->createVertexBuffer(); //memanggil metode createVertexBuffer() dari kelas GraphicsEngine untuk membuat buffer vertex baru yang akan digunakan untuk menyimpan data vertex segitiga

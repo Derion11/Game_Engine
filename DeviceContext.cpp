@@ -27,6 +27,12 @@ void DeviceContext::drawTriangleList(UINT vertex_count, UINT start_vertex_index)
 	m_device_context->Draw(vertex_count, start_vertex_index); //memanggil metode Draw pada konteks perangkat DirectX 11 untuk menggambar segitiga berdasarkan jumlah vertex yang ditentukan dan indeks awal vertex
 }
 
+void DeviceContext::drawTriangleStrip(UINT vertex_count, UINT start_vertex_index)
+{
+	m_device_context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP); //memanggil metode IASetPrimitiveTopology pada konteks perangkat DirectX 11 untuk mengatur topologi primitif menjadi triangle strip, yang menunjukkan bahwa setiap vertex setelah dua vertex pertama akan membentuk segitiga dengan dua vertex sebelumnya
+	m_device_context->Draw(vertex_count, start_vertex_index); //memanggil metode Draw pada konteks perangkat DirectX 11 untuk menggambar segitiga berdasarkan jumlah vertex yang ditentukan dan indeks awal vertex
+}
+
 void DeviceContext::setViewportSize(UINT width, UINT height)
 {
 	D3D11_VIEWPORT vp{}; //membuat struktur D3D11_VIEWPORT untuk menyimpan informasi tentang ukuran dan posisi viewport
