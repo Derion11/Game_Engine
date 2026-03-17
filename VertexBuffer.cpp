@@ -24,7 +24,7 @@ bool VertexBuffer::load(void* list_vertices, UINT size_vertex, UINT size_list, v
 	m_size_vertex = size_vertex; //menyimpan ukuran setiap vertex dalam anggota kelas untuk referensi di masa mendatang
 	m_size_list = size_list;
 	
-	if (FAILED(GraphicsEngine::get()->m_d3d_device->CreateBuffer(&buff_desc, &init_data, &m_buffer)));
+	if (FAILED(GraphicsEngine::get()->m_d3d_device->CreateBuffer(&buff_desc, &init_data, &m_buffer)))
 	{
 		return false;
 	}
