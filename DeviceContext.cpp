@@ -1,6 +1,7 @@
 #include "DeviceContext.h"
 #include "SwapChain.h"
 #include "VertexBuffer.h"
+#include "VertexShader.h"
 
 DeviceContext::DeviceContext(ID3D11DeviceContext* device_context) :m_device_context(device_context)
 {
@@ -41,6 +42,11 @@ void DeviceContext::setViewportSize(UINT width, UINT height)
 	vp.MinDepth = 0.0f; //menetapkan nilai minimum depth untuk viewport ke 0.0f
 	vp.MaxDepth = 1.0f; //menetapkan nilai maksimum depth untuk viewport ke 1.0f
 	m_device_context->RSSetViewports(1, &vp); //memanggil metode RSSetViewports pada konteks perangkat DirectX 11 untuk mengatur viewport yang akan digunakan dalam rendering, dengan menentukan jumlah viewport dan pointer ke struktur viewport
+}
+
+void DeviceContext::setVertexShader(VertexShader* vertex_shader)
+{
+	m_device_context->VSSetShader(vertex_shader->m_vs, nullptr, 0); //memanggil metode VSSetShader pada konteks perangkat DirectX 11 untuk mengatur shader vertex yang akan digunakan dalam pipeline rendering, dengan menentukan pointer ke shader vertex, pointer ke array class instance (dalam hal ini, tidak digunakan sehingga diatur ke nullptr), dan jumlah class instance (dalam hal ini, tidak digunakan sehingga diatur ke 0)
 }
 
 bool DeviceContext::release()

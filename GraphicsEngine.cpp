@@ -2,6 +2,7 @@
 #include "SwapChain.h"
 #include "DeviceContext.h"
 #include "VertexBuffer.h"
+#include "VertexShader.h"
 
 #include <d3dcompiler.h> // header yang menyediakan fungsi untuk mengkompilasi shader dari file sumber.
 
@@ -88,27 +89,51 @@ VertexBuffer* GraphicsEngine::createVertexBuffer()
 {
 	return new VertexBuffer();
 }
+
+VertexShader* GraphicsEngine::createVertexShader(const void* shader_byte_code, size_t byte_code_size)
+{
+	VertexShader* vs = new VertexShader();
+
+	if (!vs->init(shader_byte_code, byte_code_size)) //memanggil metode init pada objek VertexShader yang baru dibuat untuk menginisialisasi shader vertex dengan byte code shader yang diberikan, memungkinkan pembuatan shader vertex yang akan digunakan dalam pipeline rendering
+	{
+		vs->release(); //jika inisialisasi gagal, objek VertexShader akan dihapus untuk mencegah kebocoran memori
+		return nullptr;
+	}
+
+	return vs;
+}
+
+bool GraphicsEngine::compileVertexShader(const wchar_t* file_name, const char* entry_point_name, void** shader_byte_code, size_t* byte_code_size)
+{
+	ID3DBlob* error_blob = nullptr;
+	if(!SUCCEEDED(D3DCompileFromFile(file_name, nullptr, nullptr, entry_point_name, "vs_5_0", 0, 0, &m_blob, &error_blob))) //menggunakan fungsi D3DCompileFromFile untuk mengkompilasi shader vertex dari file sumber yang diberikan, menghasilkan byte code shader yang disimpan dalam m_vsblob untuk digunakan dalam konfigurasi buffer vertex dan pipeline rendering
+	{
+		if (error_blob) error_blob->Release();
+		return false;
+	}
+
+	*shader_byte_code = m_blob->GetBufferPointer(); //mengambil pointer ke byte code shader yang dihasilkan dari proses kompilasi dan menyimpannya dalam variabel shader_byte_code, memungkinkan akses ke byte code shader yang diperlukan untuk konfigurasi buffer vertex dan pipeline rendering
+	*byte_code_size = m_blob->GetBufferSize(); //mengambil ukuran byte code shader yang dihasilkan dari proses kompilasi dan menyimpannya dalam variabel byte_code_size, memungkinkan akses ke informasi ukuran byte code shader yang diperlukan untuk konfigurasi buffer vertex dan pipeline rendering
+	return true;
+}
+
+void GraphicsEngine::releaseCompiledShaders()
+{
+	if (m_blob)m_blob->Release(); //melepaskan sumber daya yang digunakan untuk shader vertex yang telah dikompilasi, memungkinkan pembersihan sumber daya yang terkait dengan shader vertex yang telah dikompilasi untuk mencegah kebocoran memori
+}
+
 bool GraphicsEngine::createShaders()
 {
 	ID3DBlob* errblob = nullptr;
-	D3DCompileFromFile(L"shader.fx", nullptr, nullptr, "vsmain", "vs_5_0", NULL, NULL, &m_vsblob, &errblob);
 	D3DCompileFromFile(L"shader.fx", nullptr, nullptr, "psmain", "ps_5_0", NULL, NULL, &m_psblob, &errblob);
-	m_d3d_device->CreateVertexShader(m_vsblob->GetBufferPointer(), m_vsblob->GetBufferSize(), nullptr, &m_vs);
 	m_d3d_device->CreatePixelShader(m_psblob->GetBufferPointer(), m_psblob->GetBufferSize(), nullptr, &m_ps);
 	return true;
 }
 
 bool GraphicsEngine::setShaders()
 {
-	m_imm_context->VSSetShader(m_vs, nullptr, 0);
 	m_imm_context->PSSetShader(m_ps, nullptr, 0);
 	return true;
-}
-
-void GraphicsEngine::getShaderBufferAndSize(void** bytecode, UINT* size)
-{
-	*bytecode = this->m_vsblob->GetBufferPointer();
-	*size = (UINT)this->m_vsblob->GetBufferSize();
 }
 
 GraphicsEngine * GraphicsEngine::get()
