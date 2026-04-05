@@ -4,6 +4,7 @@
 class SwapChain;
 class DeviceContext;
 class VertexBuffer;
+class ConstantBuffer;
 class VertexShader;
 class PixelShader;
 
@@ -19,6 +20,7 @@ public:
 	SwapChain * createSwapChain();
 	DeviceContext* getImmediateDeviceContext(); //mengembalikan pointer ke konteks perangkat langsung (immediate device context) yang digunakan untuk mengirim perintah rendering ke GPU, memungkinkan akses ke konteks perangkat untuk operasi rendering
 	VertexBuffer* createVertexBuffer(); //membuat dan mengembalikan pointer ke objek VertexBuffer baru, memungkinkan pembuatan buffer vertex untuk menyimpan data vertex yang akan digunakan dalam rendering grafis
+	ConstantBuffer* createConstantBuffer(); //membuat dan mengembalikan pointer ke objek ConstantBuffer baru, memungkinkan pembuatan buffer konstan untuk menyimpan data konstan yang akan digunakan dalam rendering, seperti matriks transformasi atau parameter shader lainnya
 	VertexShader* createVertexShader(const void* shader_byte_code, size_t byte_code_size); //membuat dan mengembalikan pointer ke objek VertexShader baru, memungkinkan pembuatan shader vertex untuk digunakan dalam pipeline rendering
 	PixelShader* createPixelShader(const void* shader_byte_code, size_t byte_code_size); //membuat dan mengembalikan pointer ke objek PixelShader baru, memungkinkan pembuatan shader pixel untuk digunakan dalam pipeline rendering
 public:
@@ -49,6 +51,7 @@ private:
 private:
 	friend class SwapChain; //menyatakan kelas SwapChain sebagai teman dari kelas GraphicsEngine, memungkinkan SwapChain untuk mengakses anggota pribadi dari GraphicsEngine
 	friend class VertexBuffer;
+	friend class ConstantBuffer;
 	friend class VertexShader;
 	friend class PixelShader;
 };

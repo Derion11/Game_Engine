@@ -1,4 +1,5 @@
 #include "AppWindow.h"
+#include <Windows.h>
 
 struct vec3
 {
@@ -8,9 +9,17 @@ struct vec3
 struct vertex
 {
 	vec3 position;
+	vec3 position1;
 	vec3 color;
+	vec3 color1;
 };
 
+__declspec(align(16))  //menyatakan struktur constant dengan atribut align(16) untuk memastikan bahwa data dalam buffer konstan diatur pada batas memori 16 byte, yang diperlukan untuk kinerja optimal dalam rendering grafis menggunakan DirectX 11
+struct constant
+{
+	float m_angle;
+};
+ 
 AppWindow::AppWindow()
 {
 }
@@ -31,10 +40,10 @@ void AppWindow::onCreate()
 	vertex list[] =
 	{
 		//Koordinat quad dalam ruang 3D -> {x, y, z} dengan drawTriangleStrip.
-		{-0.5f, -0.5f, 0.0f,		1,0,0},	// Vertex 1
-		{ -0.5f, 0.5f, 0.0f,		0,1,0},	// Vertex 2
-		{ 0.5f, -0.5f, 0.0f,		0,0,1},	// Vertex 3
-		{ 0.5f, 0.5f, 0.0f,			1,1,1}	// V4
+		{-0.5f, -0.5f, 0.0f,	-0.32f,-0.11f,0.0f,		0,0,0,	1,0,0},	// Vertex 1
+		{ -0.5f, 0.5f, 0.0f,	-0.11f,0.78f,0.0f,		1,1,0,	0,1,0},	// Vertex 2
+		{ 0.5f, -0.5f, 0.0f,	0.75f,-0.73f,0.0f,		0,0,1,	0,0,1},	// Vertex 3
+		{ 0.5f, 0.5f, 0.0f,		0.88f, 0.77f,0.0f,		1,1,1,	0,0,0}	// V4
 
 		//Koordinat quad dalam ruang 3D -> {x, y, z} drawTriangleList.
 		//{-0.5f, -0.5f, 0.0f },	// Vertex 1
@@ -62,6 +71,11 @@ void AppWindow::onCreate()
 	m_ps = GraphicsEngine::get()->createPixelShader(shader_byte_code, size_shader);
 	GraphicsEngine::get()->releaseCompiledShaders(); //memanggil metode releaseCompiledShaders() dari kelas GraphicsEngine untuk melepaskan sumber daya yang digunakan untuk shader yang telah dikompilasi, memungkinkan pembersihan sumber daya yang terkait dengan shader yang telah dikompilasi untuk mencegah kebocoran memori setelah shader vertex telah dibuat dan digunakan dalam konfigurasi buffer vertex
 
+	constant cc;
+	cc.m_angle = 0;  
+
+	m_cb = GraphicsEngine::get()->createConstantBuffer(); //memanggil metode createConstantBuffer() dari kelas GraphicsEngine untuk membuat buffer konstan baru yang akan digunakan untuk menyimpan data konstan yang akan digunakan dalam rendering, seperti matriks transformasi atau parameter shader lainnya
+	m_cb->load(&cc, sizeof(constant)); //memanggil metode load() pada objek ConstantBuffer untuk memuat data konstan ke dalam buffer konstan, dengan menentukan pointer ke data konstan (dalam hal ini, tidak digunakan sehingga diatur ke nullptr) dan ukuran data konstan (dalam hal ini, ukuran matriks 4x4 yang terdiri dari 16 float)
 
 }
 
@@ -74,6 +88,24 @@ void AppWindow::onUpdate()
 	// SET VIEWPORT RENDER TARGET UNTUK KITA GAMBAR
 	RECT rc = this->getClientWindowRect();
 	GraphicsEngine::get()->getImmediateDeviceContext()->setViewportSize(rc.right - rc.left, rc.bottom - rc.top);
+	
+	// UPDATE TIME	
+	unsigned long new_time = 0;
+	if (m_old_time)
+		new_time = ::GetTickCount() - m_old_time;
+	m_delta_time = new_time / 1000.0f;
+	m_old_time = ::GetTickCount();
+	m_angle += 1.57f * m_delta_time;
+	constant cc;
+	cc.m_angle = m_angle;
+
+
+	m_cb->update(GraphicsEngine::get()->getImmediateDeviceContext(), &cc);
+	// SET CONSTANT BUFFER
+	GraphicsEngine::get()->getImmediateDeviceContext()->setConstantBuffer(m_vs, m_cb);
+	GraphicsEngine::get()->getImmediateDeviceContext()->setConstantBuffer(m_ps, m_cb);
+	
+	
 	// SET DEFAULT SHADER
 	GraphicsEngine::get()->getImmediateDeviceContext()->setVertexShader(m_vs); // memanggil metode setVertexShader() pada konteks perangkat langsung untuk mengatur shader vertex yang akan digunakan dalam pipeline rendering, memungkinkan penggunaan shader vertex yang telah dibuat untuk memproses data vertex selama rendering
 	GraphicsEngine::get()->getImmediateDeviceContext()->setPixelShader(m_ps);

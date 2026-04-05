@@ -1,6 +1,7 @@
 #include "DeviceContext.h"
 #include "SwapChain.h"
 #include "VertexBuffer.h"
+#include "ConstantBuffer.h"
 #include "VertexShader.h"
 #include "PixelShader.h"
 
@@ -53,6 +54,16 @@ void DeviceContext::setVertexShader(VertexShader* vertex_shader)
 void DeviceContext::setPixelShader(PixelShader* pixel_shader)
 {
 	m_device_context->PSSetShader(pixel_shader->m_ps, nullptr, 0); //memanggil metode PSSetShader pada konteks perangkat DirectX 11 untuk mengatur shader pixel yang akan digunakan dalam pipeline rendering, dengan menentukan pointer ke shader pixel, pointer ke array class instance (dalam hal ini, tidak digunakan sehingga diatur ke nullptr), dan jumlah class instance (dalam hal ini, tidak digunakan sehingga diatur ke 0)
+}
+
+void DeviceContext::setConstantBuffer(VertexShader* vertex_shader, ConstantBuffer* buffer)
+{
+	m_device_context->VSSetConstantBuffers(0, 1, &buffer->m_buffer); //memanggil metode VSSetConstantBuffers pada konteks perangkat DirectX 11 untuk mengatur buffer konstan yang akan digunakan dalam shader vertex, dengan menentukan slot input, jumlah buffer, dan pointer ke buffer konstan
+}
+
+void DeviceContext::setConstantBuffer(PixelShader* pixel_shader, ConstantBuffer* buffer)
+{
+	m_device_context->PSSetConstantBuffers(0, 1, &buffer->m_buffer); //memanggil metode PSSetConstantBuffers pada konteks perangkat DirectX 11 untuk mengatur buffer konstan yang akan digunakan dalam shader pixel, dengan menentukan slot input, jumlah buffer, dan pointer ke buffer konstan
 }
 
 bool DeviceContext::release()
