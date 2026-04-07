@@ -16,6 +16,9 @@ class AppWindow: public Window
 	float m_delta_time = 0;
 	float m_angle = 0;
 		AppWindow();
+
+		void updateQuadPosition();
+
 		~AppWindow();
 
 		// Method diwariskan melalui class Window
