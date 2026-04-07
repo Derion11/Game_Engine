@@ -41,7 +41,7 @@ void AppWindow::onCreate()
 	{
 		//Koordinat quad dalam ruang 3D -> {x, y, z} dengan drawTriangleStrip.
 		{-0.5f, -0.5f, 0.0f,	-0.32f,-0.11f,0.0f,		0,0,0,	1,0,0},	// Vertex 1
-		{ -0.5f, 0.5f, 0.0f,	-0.11f,0.78f,0.0f,		1,1,0,	0,1,0},	// Vertex 2
+		{ -0.5f, 0.5f, 0.0f,	-0.11f,0.78f,0.0f,		0,1,0,	0,1,0},	// Vertex 2
 		{ 0.5f, -0.5f, 0.0f,	0.75f,-0.73f,0.0f,		0,0,1,	0,0,1},	// Vertex 3
 		{ 0.5f, 0.5f, 0.0f,		0.88f, 0.77f,0.0f,		1,1,1,	0,1,1}	// V4
 
