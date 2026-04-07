@@ -31,5 +31,12 @@ private:
 	VertexShader* m_vs; //pointer ke objek VertexShader, digunakan untuk mengatur shader vertex yang akan digunakan dalam pipeline rendering
 	PixelShader* m_ps; //pointer ke objek PixelShader, digunakan untuk mengatur shader pixel yang akan digunakan dalam pipeline rendering
 	ConstantBuffer* m_cb; //pointer ke objek ConstantBuffer, digunakan untuk menyimpan data konstan yang akan digunakan dalam rendering, seperti matriks transformasi atau parameter shader lainnya	
+private:
+	float m_old_delta;
+	float m_new_delta;
+	//float m_delta_time;
+
+	float m_delta_pos;
+
 };
 

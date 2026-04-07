@@ -38,7 +38,12 @@ void AppWindow::updateQuadPosition()
 	constant cc;
 	cc.m_angle = m_angle;
 
-	cc.m_world.setTranslation(Vector3D(0, 0, 0));
+	/*m_delta_pos += m_delta_time * 1.0f;
+
+	if(m_delta_pos > 1.0f)
+		m_delta_pos = 0;
+
+	cc.m_world.setTranslation(Vector3D(0,1,0));
 	cc.m_view.setIdentity();
 	cc.m_proj.setOrthoLH
 	(
@@ -46,7 +51,7 @@ void AppWindow::updateQuadPosition()
 		(this->getClientWindowRect().bottom - this->getClientWindowRect().top) / 400.0f,
 		-4.0f,
 		4.0f
-	);
+	);*/
 
 
 	m_cb->update(GraphicsEngine::get()->getImmediateDeviceContext(), &cc);
@@ -71,7 +76,7 @@ void AppWindow::onCreate()
 		{Vector3D(-0.5f, -0.5f, 0.0f),	Vector3D(-0.32f,-0.11f,0.0f),	Vector3D(1,0,0),	Vector3D(1,1,0)},	// Vertex 1
 		{Vector3D(-0.5f, 0.5f, 0.0f),	Vector3D(-0.11f,0.78f,0.0f),	Vector3D(0,1,0),	Vector3D(0,1,1)},	// Vertex 2
 		{Vector3D(0.5f, -0.5f, 0.0f),	Vector3D(0.75f,-0.73f,0.0f),	Vector3D(0,0,1),	Vector3D(1,0,1)},	// Vertex 3
-		{Vector3D(0.5f, 0.5f, 0.0f),	Vector3D(0.88f, 0.77f,0.0f),	Vector3D(1,1,1),	Vector3D(0,1,0)}	// V4
+		{Vector3D(0.5f, 0.5f, 0.0f),	Vector3D(0.88f, 0.77f,0.0f),	Vector3D(1,1,1),	Vector3D(0,0,0)}	// V4
 
 		//Koordinat quad dalam ruang 3D -> {x, y, z} drawTriangleList.
 		//{-0.5f, -0.5f, 0.0f },	// Vertex 1
@@ -139,8 +144,13 @@ void AppWindow::onUpdate()
 
 	// GAMBAR SEGITIGA
 	GraphicsEngine::get()->getImmediateDeviceContext()->drawTriangleStrip(m_vb->getSizeVertexList(), 0);
-
 	m_swap_chain->present(true);
+
+	m_old_delta = m_new_delta;
+	m_new_delta = ::GetTickCount();
+
+	m_delta_time = (m_old_delta)?((m_new_delta - m_old_delta) / 1000.0f):0;
+
 }
 
 void AppWindow::onDestroy()
