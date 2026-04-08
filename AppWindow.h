@@ -35,6 +35,7 @@ private:
 
 	float m_time;
 	float m_delta_pos;
+	float m_delta_scale;
 
 };
 
