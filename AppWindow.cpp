@@ -19,7 +19,7 @@ struct constant
 	Matrix4x4 m_view;
 	Matrix4x4 m_proj;
 
-	float m_angle;
+	float m_time;
 };
  
 AppWindow::AppWindow()
@@ -28,30 +28,31 @@ AppWindow::AppWindow()
 
 void AppWindow::updateQuadPosition()
 {
-	// UPDATE TIME	
 	unsigned long new_time = 0;
 	if (m_old_time)
 		new_time = ::GetTickCount() - m_old_time;
 	m_delta_time = new_time / 1000.0f;
 	m_old_time = ::GetTickCount();
-	m_angle += 1.57f * m_delta_time;
+	m_time += 1.57f * m_delta_time;
 	constant cc;
-	cc.m_angle = m_angle;
+	cc.m_time = m_time;
 
-	/*m_delta_pos += m_delta_time * 1.0f;
+	m_delta_pos += m_delta_time / 4.0f;
 
-	if(m_delta_pos > 1.0f)
+	if (m_delta_pos > 1.0f)
 		m_delta_pos = 0;
 
-	cc.m_world.setTranslation(Vector3D(0,1,0));
+	cc.m_world.setTranslation(Vector3D::lerp(Vector3D(-2,-2,0), Vector3D(2,2,0), m_delta_pos));
+
+
 	cc.m_view.setIdentity();
 	cc.m_proj.setOrthoLH
 	(
-		(this->getClientWindowRect().right - this->getClientWindowRect().left)/400.0f,
+		(this->getClientWindowRect().right - this->getClientWindowRect().left)/ 400.0f,
 		(this->getClientWindowRect().bottom - this->getClientWindowRect().top) / 400.0f,
 		-4.0f,
 		4.0f
-	);*/
+	);
 
 
 	m_cb->update(GraphicsEngine::get()->getImmediateDeviceContext(), &cc);
@@ -78,13 +79,6 @@ void AppWindow::onCreate()
 		{Vector3D(0.5f, -0.5f, 0.0f),	Vector3D(0.75f,-0.73f,0.0f),	Vector3D(0,0,1),	Vector3D(1,0,1)},	// Vertex 3
 		{Vector3D(0.5f, 0.5f, 0.0f),	Vector3D(0.88f, 0.77f,0.0f),	Vector3D(1,1,1),	Vector3D(0,0,0)}	// V4
 
-		//Koordinat quad dalam ruang 3D -> {x, y, z} drawTriangleList.
-		//{-0.5f, -0.5f, 0.0f },	// Vertex 1
-		//{ -0.5f, 0.5f, 0.0f },	// Vertex 2
-		//{ 0.5f, 0.5f, 0.0f },		// Vertex 3
-		//{0.5f, 0.5f, 0.0f },		// V4
-		//{ 0.5f, -0.5f, 0.0f },	// V5
-		//{ -0.5f, -0.5f, 0.0f }	// V6
 	};
 
 	m_vb = GraphicsEngine::get()->createVertexBuffer(); //memanggil metode createVertexBuffer() dari kelas GraphicsEngine untuk membuat buffer vertex baru yang akan digunakan untuk menyimpan data vertex segitiga
@@ -105,7 +99,7 @@ void AppWindow::onCreate()
 	GraphicsEngine::get()->releaseCompiledShaders(); //memanggil metode releaseCompiledShaders() dari kelas GraphicsEngine untuk melepaskan sumber daya yang digunakan untuk shader yang telah dikompilasi, memungkinkan pembersihan sumber daya yang terkait dengan shader yang telah dikompilasi untuk mencegah kebocoran memori setelah shader vertex telah dibuat dan digunakan dalam konfigurasi buffer vertex
 
 	constant cc;
-	cc.m_angle = 0;  
+	cc.m_time = 0;  
 
 	m_cb = GraphicsEngine::get()->createConstantBuffer(); //memanggil metode createConstantBuffer() dari kelas GraphicsEngine untuk membuat buffer konstan baru yang akan digunakan untuk menyimpan data konstan yang akan digunakan dalam rendering, seperti matriks transformasi atau parameter shader lainnya
 	m_cb->load(&cc, sizeof(constant)); //memanggil metode load() pada objek ConstantBuffer untuk memuat data konstan ke dalam buffer konstan, dengan menentukan pointer ke data konstan (dalam hal ini, tidak digunakan sehingga diatur ke nullptr) dan ukuran data konstan (dalam hal ini, ukuran matriks 4x4 yang terdiri dari 16 float)

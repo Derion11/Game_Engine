@@ -12,9 +12,6 @@
 class AppWindow: public Window
 {
 	public:
-	unsigned long m_old_time = 0;
-	float m_delta_time = 0;
-	float m_angle = 0;
 		AppWindow();
 
 		void updateQuadPosition();
@@ -32,9 +29,13 @@ private:
 	PixelShader* m_ps; //pointer ke objek PixelShader, digunakan untuk mengatur shader pixel yang akan digunakan dalam pipeline rendering
 	ConstantBuffer* m_cb; //pointer ke objek ConstantBuffer, digunakan untuk menyimpan data konstan yang akan digunakan dalam rendering, seperti matriks transformasi atau parameter shader lainnya	
 private:
+	unsigned long m_old_time = 0;
+	//float m_delta_time = 0;
+	float m_time;
+
 	float m_old_delta;
 	float m_new_delta;
-	//float m_delta_time;
+	float m_delta_time;
 
 	float m_delta_pos;
 

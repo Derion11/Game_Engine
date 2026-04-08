@@ -22,7 +22,6 @@ public:
 	void setTranslation(const Vector3D& translation)
 	{
 		setIdentity();
-		::memset(m_mat, 0, sizeof(float) * 16);
 		m_mat[3][0] = translation.m_x;
 		m_mat[3][1] = translation.m_y;
 		m_mat[3][2] = translation.m_z;
