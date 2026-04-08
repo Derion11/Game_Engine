@@ -28,11 +28,12 @@ AppWindow::AppWindow()
 
 void AppWindow::updateQuadPosition()
 {
-	unsigned long new_time = 0;
+	/*unsigned long new_time = 0;
 	if (m_old_time)
 		new_time = ::GetTickCount() - m_old_time;
 	m_delta_time = new_time / 1000.0f;
-	m_old_time = ::GetTickCount();
+	m_old_time = ::GetTickCount();*/
+
 	m_time += 1.57f * m_delta_time;
 	constant cc;
 	cc.m_time = m_time;
