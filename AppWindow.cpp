@@ -45,7 +45,7 @@ void AppWindow::updateQuadPosition()
 
 	// cc.m_world.setTranslation(Vector3D::lerp(Vector3D(-2.0f,-2.0f,0), Vector3D(2.0f,2.0f,0), m_delta_pos));
 
-	m_delta_scale += m_delta_time / 0.15f;
+	m_delta_scale += m_delta_time / 0.5f;
 
 	//cc.m_world.setScale(Vector3D::lerp(Vector3D(0.5, 0.5, 0), Vector3D(1.0f, 1.0f, 0), (sin(m_delta_scale)+1.0f)/2.0f));
 
@@ -54,6 +54,21 @@ void AppWindow::updateQuadPosition()
 	//cc.m_world *= temp;
 
 	cc.m_world.setScale(Vector3D(1, 1, 1));
+
+	temp.setIdentity();
+	temp.setRotationZ(m_delta_scale);
+	cc.m_world *= temp;
+
+	temp.setIdentity();
+	temp.setRotationY(m_delta_scale);
+	cc.m_world *= temp;
+
+	temp.setIdentity();
+	temp.setRotationX(m_delta_scale);
+	cc.m_world *= temp;
+
+
+
 
 	cc.m_view.setIdentity();
 	cc.m_proj.setOrthoLH
@@ -85,16 +100,16 @@ void AppWindow::onCreate()
 	{
 		//Koordinat quad dalam ruang 3D -> {x, y, z}.
 		// Tampak Depan
-		{Vector3D(-0.5f, -0.5f, -0.5f),	Vector3D(0,0,0),	Vector3D(0,1,0)},
-		{Vector3D(-0.5f, 0.5f, -0.5f),	Vector3D(1,1,0),	Vector3D(0,1,1)},
-		{Vector3D(0.5f, 0.5f, -0.5f),	Vector3D(0,0,1),	Vector3D(1,0,0)},
-		{Vector3D(0.5f, -0.5f, -0.5f),	Vector3D(1,1,1),	Vector3D(0,0,1)},
+		{Vector3D(-0.5f, -0.5f, -0.5f),	Vector3D(1,0,0),	Vector3D(0.2f,0,0)},
+		{Vector3D(-0.5f, 0.5f, -0.5f),	Vector3D(1,1,0),	Vector3D(0.2f,0.2f,0)},
+		{Vector3D(0.5f, 0.5f, -0.5f),	Vector3D(1,1,0),	Vector3D(0.2f,0.2f,0)},
+		{Vector3D(0.5f, -0.5f, -0.5f),	Vector3D(1,0,0),	Vector3D(0.2f,0,0)},
 
 		// Tampak Belakang
-		{Vector3D(0.5f, -0.5f, 0.5f),	Vector3D(0,0,0),	Vector3D(0,1,0)},
-		{Vector3D(0.5f, 0.5f, 0.5f),	Vector3D(1,1,0),	Vector3D(0,1,1)},
-		{Vector3D(-0.5f, 0.5f, 0.5f),	Vector3D(0,0,1),	Vector3D(1,0,0)},
-		{Vector3D(-0.5f, -0.5f, 0.5f),	Vector3D(1,1,1),	Vector3D(0,0,1)}
+		{Vector3D(0.5f, -0.5f, 0.5f),	Vector3D(0,1,0),	Vector3D(0,0.2f,0)},
+		{Vector3D(0.5f, 0.5f, 0.5f),	Vector3D(0,1,1),	Vector3D(0,0.2f,0.2f)},
+		{Vector3D(-0.5f, 0.5f, 0.5f),	Vector3D(0,1,1),	Vector3D(0,0.2f,0.2f)},
+		{Vector3D(-0.5f, -0.5f, 0.5f),	Vector3D(0,1,0),	Vector3D(0,0.2f,0)}
 
 	};
 
