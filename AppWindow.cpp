@@ -7,7 +7,6 @@
 struct vertex
 {
 	Vector3D position;
-	Vector3D position1;
 	Vector3D color;
 	Vector3D color1;
 };
@@ -48,11 +47,13 @@ void AppWindow::updateQuadPosition()
 
 	m_delta_scale += m_delta_time / 0.15f;
 
-	cc.m_world.setScale(Vector3D::lerp(Vector3D(0.5, 0.5, 0), Vector3D(1.0f, 1.0f, 0), (sin(m_delta_scale)+1.0f)/2.0f));
+	//cc.m_world.setScale(Vector3D::lerp(Vector3D(0.5, 0.5, 0), Vector3D(1.0f, 1.0f, 0), (sin(m_delta_scale)+1.0f)/2.0f));
 
-	temp.setTranslation(Vector3D::lerp(Vector3D(-1.5f, -1.5f, 0), Vector3D(1.5f, 1.5f, 0), m_delta_pos));
+	//temp.setTranslation(Vector3D::lerp(Vector3D(-1.5f, -1.5f, 0), Vector3D(1.5f, 1.5f, 0), m_delta_pos));
 
-	cc.m_world *= temp;
+	//cc.m_world *= temp;
+
+	cc.m_world.setScale(Vector3D(1, 1, 1));
 
 	cc.m_view.setIdentity();
 	cc.m_proj.setOrthoLH
@@ -80,25 +81,62 @@ void AppWindow::onCreate()
 	RECT rc = this->getClientWindowRect(); //memanggil metode getClientWindowRect() dari kelas Window untuk mendapatkan ukuran jendela klien, yang akan digunakan untuk mengkonfigurasi swap chain agar sesuai dengan ukuran jendela
 	m_swap_chain->init(this->m_hwnd,rc.right-rc.left, rc.bottom-rc.top);
 
-	vertex list[] =
+	vertex vertex_list[] =
 	{
-		//Koordinat quad dalam ruang 3D -> {x, y, z} dengan drawTriangleStrip.
-		{Vector3D(-0.5f, -0.5f, 0.0f),	Vector3D(-0.32f,-0.11f,0.0f),	Vector3D(1,0,0),	Vector3D(1,1,0)},	// Vertex 1
-		{Vector3D(-0.5f, 0.5f, 0.0f),	Vector3D(-0.11f,0.78f,0.0f),	Vector3D(0,1,0),	Vector3D(0,1,1)},	// Vertex 2
-		{Vector3D(0.5f, -0.5f, 0.0f),	Vector3D(0.75f,-0.73f,0.0f),	Vector3D(0,0,1),	Vector3D(1,0,1)},	// Vertex 3
-		{Vector3D(0.5f, 0.5f, 0.0f),	Vector3D(0.88f, 0.77f,0.0f),	Vector3D(1,1,1),	Vector3D(0,0,0)}	// V4
+		//Koordinat quad dalam ruang 3D -> {x, y, z}.
+		// Tampak Depan
+		{Vector3D(-0.5f, -0.5f, -0.5f),	Vector3D(0,0,0),	Vector3D(0,1,0)},
+		{Vector3D(-0.5f, 0.5f, -0.5f),	Vector3D(1,1,0),	Vector3D(0,1,1)},
+		{Vector3D(0.5f, 0.5f, -0.5f),	Vector3D(0,0,1),	Vector3D(1,0,0)},
+		{Vector3D(0.5f, -0.5f, -0.5f),	Vector3D(1,1,1),	Vector3D(0,0,1)},
+
+		// Tampak Belakang
+		{Vector3D(0.5f, -0.5f, 0.5f),	Vector3D(0,0,0),	Vector3D(0,1,0)},
+		{Vector3D(0.5f, 0.5f, 0.5f),	Vector3D(1,1,0),	Vector3D(0,1,1)},
+		{Vector3D(-0.5f, 0.5f, 0.5f),	Vector3D(0,0,1),	Vector3D(1,0,0)},
+		{Vector3D(-0.5f, -0.5f, 0.5f),	Vector3D(1,1,1),	Vector3D(0,0,1)}
 
 	};
 
 	m_vb = GraphicsEngine::get()->createVertexBuffer(); //memanggil metode createVertexBuffer() dari kelas GraphicsEngine untuk membuat buffer vertex baru yang akan digunakan untuk menyimpan data vertex segitiga
-	UINT size_list = ARRAYSIZE(list);
+	UINT size_list = ARRAYSIZE(vertex_list);
+
+	unsigned int index_list[] =
+	{
+		0,1,2, // Segitiga pertama
+		2,3,0, // Segitiga kedua
+		// Bagian belakang
+		4,5,6,
+		6,7,4,
+		// Bagian atas
+		1,6,5,
+		5,2,1,
+		// Bagian bawah
+		7,0,3,
+		3,4,7,
+		// Bagian kanan
+		3,2,5,
+		5,4,3,
+		// Bagian kiri
+		7,6,1,
+		1,0,7
+
+	};
+
+
+	m_ib = GraphicsEngine::get()->createIndexBuffer();
+	UINT size_index_list = ARRAYSIZE(index_list);
+	m_ib->load(index_list, size_index_list);
+
+
+
 	
 	void* shader_byte_code = nullptr; //mendeklarasikan pointer void untuk menyimpan byte code shader, yang akan digunakan untuk mengonfigurasi buffer vertex agar sesuai dengan format data vertex yang digunakan dalam shader
 	size_t size_shader = 0;
 	GraphicsEngine::get()->compileVertexShader(L"VertexShader.hlsl", "vsmain", &shader_byte_code, &size_shader);
 	
 	m_vs = GraphicsEngine::get()->createVertexShader(shader_byte_code, size_shader);
-	m_vb->load(list, sizeof(vertex), size_list, shader_byte_code, size_shader); //memanggil metode load() pada objek VertexBuffer untuk memuat data vertex segitiga ke dalam buffer vertex, dengan menentukan pointer ke daftar vertex, ukuran setiap vertex, jumlah vertex dalam daftar, dan parameter tambahan untuk shader byte code (dalam hal ini, tidak digunakan sehingga diatur ke nullptr dan 0)
+	m_vb->load(vertex_list, sizeof(vertex), size_list, shader_byte_code, size_shader); //memanggil metode load() pada objek VertexBuffer untuk memuat data vertex segitiga ke dalam buffer vertex, dengan menentukan pointer ke daftar vertex, ukuran setiap vertex, jumlah vertex dalam daftar, dan parameter tambahan untuk shader byte code (dalam hal ini, tidak digunakan sehingga diatur ke nullptr dan 0)
 
 	GraphicsEngine::get()->releaseCompiledShaders(); //memanggil metode releaseCompiledShaders() dari kelas GraphicsEngine untuk melepaskan sumber daya yang digunakan untuk shader yang telah dikompilasi, memungkinkan pembersihan sumber daya yang terkait dengan shader yang telah dikompilasi untuk mencegah kebocoran memori setelah shader vertex telah dibuat dan digunakan dalam konfigurasi buffer vertex
 	
@@ -142,11 +180,13 @@ void AppWindow::onUpdate()
 	GraphicsEngine::get()->getImmediateDeviceContext()->setVertexShader(m_vs); // memanggil metode setVertexShader() pada konteks perangkat langsung untuk mengatur shader vertex yang akan digunakan dalam pipeline rendering, memungkinkan penggunaan shader vertex yang telah dibuat untuk memproses data vertex selama rendering
 	GraphicsEngine::get()->getImmediateDeviceContext()->setPixelShader(m_ps);
 
-	// SET VERTICES DARI SEGITIGA UNTUK GAMBAR
+	// SET INDEKS DARI SEGITIGA UNTUK GAMBAR
 	GraphicsEngine::get()->getImmediateDeviceContext()->setVertexBuffer(m_vb);
+	// SET INDEKS DARI SEGITIGA UNTUK GAMBAR
+	GraphicsEngine::get()->getImmediateDeviceContext()->setIndexBuffer(m_ib);
 
 	// GAMBAR SEGITIGA
-	GraphicsEngine::get()->getImmediateDeviceContext()->drawTriangleStrip(m_vb->getSizeVertexList(), 0);
+	GraphicsEngine::get()->getImmediateDeviceContext()->drawIndexedTriangleList(m_ib->getSizeIndexList(), 0, 0);
 	m_swap_chain->present(true);
 
 	m_old_delta = m_new_delta;
@@ -160,6 +200,8 @@ void AppWindow::onDestroy()
 {
 	Window::onDestroy();
 	m_vb->release();
+	m_ib->release();
+	m_cb->release();
 	m_swap_chain->release();
 	m_vs->release();
 	m_ps->release();
