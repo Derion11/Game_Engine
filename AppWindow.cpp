@@ -73,8 +73,9 @@ void AppWindow::updateQuadPosition()
 	cc.m_view.setIdentity();
 	cc.m_proj.setOrthoLH
 	(
-		(this->getClientWindowRect().right - this->getClientWindowRect().left)/ 400.0f,
-		(this->getClientWindowRect().bottom - this->getClientWindowRect().top) / 400.0f,
+		// Menghitung lebar dan tinggi jendela klien dengan menggunakan metode getClientWindowRect() dari kelas Window untuk mendapatkan ukuran jendela klien, yang kemudian digunakan untuk mengatur matriks proyeksi ortografis agar sesuai dengan ukuran jendela
+		(this->getClientWindowRect().right - this->getClientWindowRect().left)/ 300.0f,
+		(this->getClientWindowRect().bottom - this->getClientWindowRect().top) / 300.0f,
 		-4.0f,
 		4.0f
 	);
