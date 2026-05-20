@@ -21,6 +21,23 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) // P
 		window->onCreate();
 		break;
 	}
+
+	case WM_SETFOCUS: // Pesan fokus jendela
+	{
+		// Event fired when the window gains focus
+		Window* window = (Window*)GetWindowLongPtr(hwnd, GWLP_USERDATA);
+		window->onFocus();
+		break;
+	}
+
+	case WM_KILLFOCUS: // Pesan kehilangan fokus jendela
+	{
+		// Event fired when the window loses focus
+		Window* window = (Window*)GetWindowLongPtr(hwnd, GWLP_USERDATA);
+		window->onKillFocus();
+		break;
+	}
+
 	case WM_DESTROY: // Pesan penghancuran jendela
 	{
 		// Event fired when the window is destroyed
@@ -138,6 +155,16 @@ void Window::onUpdate()
 void Window::onDestroy()
 {
 	m_is_run = false;
+}
+
+void Window::onFocus()
+{
+
+}
+
+void Window::onKillFocus()
+{
+
 }
 
 Window::~Window()

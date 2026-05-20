@@ -24,10 +24,17 @@ class AppWindow : public Window, public InputListener
 		void onCreate() override;
 		void onUpdate() override;
 		void onDestroy() override;
+		virtual void onFocus() override;
+		virtual void onKillFocus() override;
 
 		// Inherited via InputListener
-		void onKeyDown(int key) override;
-		void onKeyUp(int key) override;
+		virtual void onKeyDown(int key) override;
+		virtual void onKeyUp(int key) override;
+		virtual void onMouseMove(const Point& delta_mouse_pos) override;
+		virtual void onLeftMouseDown(const Point& mouse_pos) override;
+		virtual void onLeftMouseUp(const Point& mouse_pos) override;
+		virtual void onRightMouseDown(const Point& mouse_pos) override;
+		virtual void onRightMouseUp(const Point& mouse_pos) override;
 private:
 	SwapChain* m_swap_chain; //pointer ke objek SwapChain, digunakan untuk mengelola buffer swap dan menampilkan hasil rendering ke layar
 	VertexBuffer* m_vb; //pointer ke objek VertexBuffer, digunakan untuk menyimpan data vertex yang akan digunakan dalam rendering grafis
@@ -46,6 +53,8 @@ private:
 
 	float m_rot_x = 0.0f;
 	float m_rot_y = 0.0f;
+
+	float m_scale_cube = 1;
 
 };
 
