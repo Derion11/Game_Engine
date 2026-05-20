@@ -1,0 +1,72 @@
+#include "InputSystem.h"
+#include <Windows.h>
+
+InputSystem::InputSystem()
+{
+}
+
+InputSystem::~InputSystem()
+{
+}
+
+void InputSystem::update()
+{
+	if (::GetKeyboardState(m_keys_state))
+	{
+		for (unsigned int i = 0; i < 256; ++i)
+		{
+			// KEY IS DOWN
+			if (m_keys_state[i] & 0x80)
+			{
+				std::unordered_set<InputListener*>::iterator it = m_set_listeners.begin();
+				while (it != m_set_listeners.end())
+				{
+					(*it)->onKeyDown(i);
+					++it;
+				}
+			}
+			else // KEY IS UP
+			{
+				if (m_keys_state[i] != m_old_keys_state[i]) // Memeriksa apakah status tombol berubah dari sebelumnya (dari down ke up)
+				{
+					std::unordered_set<InputListener*>::iterator it = m_set_listeners.begin();
+					while (it != m_set_listeners.end())
+					{
+						(*it)->onKeyUp(i);
+						++it;
+					}
+				}
+			}
+			
+		}
+		// Setelah memproses input, kita perlu memperbarui m_old_keys_state dengan status tombol saat ini untuk digunakan pada update berikutnya
+		::memcpy(m_old_keys_state, m_keys_state, sizeof(unsigned char) * 256); 
+	}
+}
+
+void InputSystem::addListener(InputListener* listener)
+{
+	// Implementasi untuk menambahkan listener ke dalam sistem input
+	// m_map_listeners.insert(std::make_pair<InputListener*, InputListener*> 
+	// 	(std::forward<InputListener*>(listener), std::forward<InputListener*>(listener)));
+	m_set_listeners.insert(listener); // Menambahkan listener ke dalam unordered_set, memastikan bahwa setiap listener hanya disimpan sekali dan memungkinkan pencarian yang efisien
+}
+
+void InputSystem::removeListener(InputListener* listener)
+{
+	// Implementasi untuk menghapus listener dari sistem input
+	// std::map<InputListener*, InputListener*>::iterator it = m_map_listeners.find(listener);
+	
+	// if (it != m_map_listeners.end())
+	// {
+	// 	m_map_listeners.erase(it);
+	//}
+	m_set_listeners.erase(listener); // Menghapus listener dari unordered_set, memastikan bahwa listener yang dihapus tidak lagi menerima input dan memungkinkan penghapusan yang efisien
+
+}
+
+InputSystem* InputSystem::get()
+{
+	static InputSystem system;
+	return &system;
+}

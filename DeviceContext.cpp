@@ -1,7 +1,10 @@
 #include "DeviceContext.h"
 #include "SwapChain.h"
 #include "VertexBuffer.h"
+#include "IndexBuffer.h"
+#include "ConstantBuffer.h"
 #include "VertexShader.h"
+#include "PixelShader.h"
 
 DeviceContext::DeviceContext(ID3D11DeviceContext* device_context) :m_device_context(device_context)
 {
@@ -20,6 +23,17 @@ void DeviceContext::setVertexBuffer(VertexBuffer* vertex_buffer)
 	UINT offset = 0; //menetapkan offset ke 0, menunjukkan bahwa data vertex akan dimulai dari awal buffer
 	m_device_context->IASetVertexBuffers(0, 1, &vertex_buffer->m_buffer, &stride, &offset); //memanggil metode IASetVertexBuffers pada konteks perangkat DirectX 11 untuk mengatur buffer vertex yang akan digunakan dalam rendering, dengan menentukan slot input, jumlah buffer, pointer ke buffer, stride, dan offset
 	m_device_context->IASetInputLayout(vertex_buffer->m_layout); //memanggil metode IASetInputLayout pada konteks perangkat DirectX 11 untuk mengatur layout input yang sesuai dengan format data vertex yang digunakan dalam buffer vertex
+}
+
+void DeviceContext::setIndexBuffer(IndexBuffer* index_buffer)
+{
+	m_device_context->IASetIndexBuffer(index_buffer->m_buffer, DXGI_FORMAT_R32_UINT, 0); //memanggil metode IASetIndexBuffer pada konteks perangkat DirectX 11 untuk mengatur buffer indeks yang akan digunakan dalam rendering, dengan menentukan pointer ke buffer indeks, format data indeks (dalam hal ini, 32-bit unsigned integer), dan offset (dalam hal ini, 0)
+}
+
+void DeviceContext::drawIndexedTriangleList(UINT index_count, UINT start_vertex_index, UINT start_index_location)
+{
+	m_device_context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST); //memanggil metode IASetPrimitiveTopology pada konteks perangkat DirectX 11 untuk mengatur topologi primitif menjadi triangle list, yang menunjukkan bahwa setiap tiga vertex akan membentuk sebuah segitiga
+	m_device_context->DrawIndexed(index_count, start_index_location, start_vertex_index); //memanggil metode DrawIndexed pada konteks perangkat DirectX 11 untuk menggambar segitiga berdasarkan jumlah indeks yang ditentukan, lokasi awal indeks, dan indeks dasar vertex
 }
 
 void DeviceContext::drawTriangleList(UINT vertex_count, UINT start_vertex_index)
@@ -47,6 +61,21 @@ void DeviceContext::setViewportSize(UINT width, UINT height)
 void DeviceContext::setVertexShader(VertexShader* vertex_shader)
 {
 	m_device_context->VSSetShader(vertex_shader->m_vs, nullptr, 0); //memanggil metode VSSetShader pada konteks perangkat DirectX 11 untuk mengatur shader vertex yang akan digunakan dalam pipeline rendering, dengan menentukan pointer ke shader vertex, pointer ke array class instance (dalam hal ini, tidak digunakan sehingga diatur ke nullptr), dan jumlah class instance (dalam hal ini, tidak digunakan sehingga diatur ke 0)
+}
+
+void DeviceContext::setPixelShader(PixelShader* pixel_shader)
+{
+	m_device_context->PSSetShader(pixel_shader->m_ps, nullptr, 0); //memanggil metode PSSetShader pada konteks perangkat DirectX 11 untuk mengatur shader pixel yang akan digunakan dalam pipeline rendering, dengan menentukan pointer ke shader pixel, pointer ke array class instance (dalam hal ini, tidak digunakan sehingga diatur ke nullptr), dan jumlah class instance (dalam hal ini, tidak digunakan sehingga diatur ke 0)
+}
+
+void DeviceContext::setConstantBuffer(VertexShader* vertex_shader, ConstantBuffer* buffer)
+{
+	m_device_context->VSSetConstantBuffers(0, 1, &buffer->m_buffer); //memanggil metode VSSetConstantBuffers pada konteks perangkat DirectX 11 untuk mengatur buffer konstan yang akan digunakan dalam shader vertex, dengan menentukan slot input, jumlah buffer, dan pointer ke buffer konstan
+}
+
+void DeviceContext::setConstantBuffer(PixelShader* pixel_shader, ConstantBuffer* buffer)
+{
+	m_device_context->PSSetConstantBuffers(0, 1, &buffer->m_buffer); //memanggil metode PSSetConstantBuffers pada konteks perangkat DirectX 11 untuk mengatur buffer konstan yang akan digunakan dalam shader pixel, dengan menentukan slot input, jumlah buffer, dan pointer ke buffer konstan
 }
 
 bool DeviceContext::release()

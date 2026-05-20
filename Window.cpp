@@ -67,7 +67,7 @@ bool Window::init() // Inisialisasi window
 					L"DirectX Application", // judul jendela
 					WS_OVERLAPPEDWINDOW, // gaya jendela
 					CW_USEDEFAULT, CW_USEDEFAULT, // posisi x dan y
-					800, 600, // lebar dan tinggi
+					800, 600, // lebar dan tinggi layar (di tutorial 1024x768)
 					NULL, // jendela induk
 					NULL, // menu
 					NULL, // instance aplikasi

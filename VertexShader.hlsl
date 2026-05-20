@@ -1,28 +1,40 @@
-
-float4 vsmain(float4 position : POSITION) : SV_POSITION 
+struct VS_INPUT
 {
-    if (position.y > 0 && position.y < 1)
-    {
-        position.x += 0.25f; // Move the vertex to the right by 0.25 units if it's within the specified y range
-    }
-    
-    if (position.y > -1 && position.y < 0 && position.x > 0 && position.x < 1)
-    {
-        position.y += 0.25f; // Move the vertex to the right by 0.25 units if it's within the specified y range
-    }
-    
-    if (position.y > 0 && position.y < 1 && position.x > -1 && position.x < 0)
-    {
-        position.y -= 0.25f; // Move the vertex to the right by 0.25 units if it's within the specified y range
-    }
-    
-    return position; // Pass the vertex position through to the pixel shader
-}
+    float4 position : POSITION;
+    float3 color: COLOR;
+    float3 color1 : COLOR1;
+};
 
-
-/*
-float4 psmain(float4 position : SV_POSITION) : SV_Target
+struct VS_OUTPUT
 {
-    return float4(0.8f, 0.9f, 0.4f, 1.0f);
+    float4 position : SV_POSITION;
+    float3 color : COLOR;
+    float3 color1 : COLOR1;
+};
+
+cbuffer constant : register(b0)
+{
+    row_major float4x4 m_world;
+    row_major float4x4 m_view;
+    row_major float4x4 m_proj;
+    float m_time;
+};
+    
+VS_OUTPUT vsmain(VS_INPUT input)
+{
+    VS_OUTPUT output = (VS_OUTPUT)0;
+    
+    // output.position = lerp(input.position, input.position1, (sin(m_angle) + 1.0f) / 2.0f);
+    
+    // World Space
+    output.position = mul(input.position, m_world);
+    // View Space
+    output.position = mul(output.position, m_view);
+    // Screen Space    
+    output.position = mul(output.position, m_proj);
+  
+    
+    output.color = input.color;
+    output.color1 = input.color1;
+    return output;
 }
-*/
